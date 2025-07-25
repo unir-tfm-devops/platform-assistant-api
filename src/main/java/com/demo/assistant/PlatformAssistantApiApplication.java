@@ -1,4 +1,4 @@
-package com.demo.platform_assistant_api;
+package com.demo.assistant;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

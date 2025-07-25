@@ -1,0 +1,53 @@
+# Maven build output
+/target/
+
+# IntelliJ IDEA project files
+.idea/
+*.iml
+*.iws
+
+# IntelliJ local history & workspace
+*.ipr
+*.swp
+
+# Logs
+*.log
+
+# Compiled class files
+*.class
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Eclipse (if mixed devs use it)
+.project
+.classpath
+.settings/
+
+# Maven wrapper (optional if not using it)
+.mvn/wrapper/maven-wrapper.jar
+
+# Environment files (optional if used)
+.env
+
+# Package distributions
+*.jar
+*.war
+*.ear
+
+# Coverage reports (if using tools like JaCoCo)
+coverage/
+*.exec
+
+# IDE caches
+/out/
+
+# Vscode
+.vscode/

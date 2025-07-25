@@ -1,2 +1,5 @@
-package com.demo.assistant.model;public class ChatRequest {
+package com.demo.assistant.model;
+
+public record ChatRequest(String message) {
+
 }
