@@ -1,0 +1,7 @@
+spring.application.name=platform-assistant-api
+
+
+# OpenAI Configuration
+spring.ai.openai.api-key=${OPENAI_API_KEY:your-openai-api-key-here}
+spring.ai.openai.chat.options.model=gpt-4o-mini
+
