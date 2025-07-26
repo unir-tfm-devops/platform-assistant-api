@@ -24,7 +24,7 @@ public class ChatbotController {
         try {
             log.info("Received chat request: {}", request.message());
 
-            String response = chatbotService.chat(request.message());
+            String response = chatbotService.chat(request.message(), request.conversationId());
 
             ChatResponse chatResponse = new ChatResponse(response, true);
 
