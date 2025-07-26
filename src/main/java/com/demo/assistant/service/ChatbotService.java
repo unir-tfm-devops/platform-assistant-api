@@ -21,38 +21,40 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ChatbotService {
 
-    @Value("classpath:context/system.txt")
-    private Resource systemContext;
+  @Value("classpath:context/system.txt")
+  private Resource systemContext;
 
-    private final SyncMcpToolCallbackProvider syncMcpToolCallbackProvider;
-    private final ChatClient chatClient;
+  private final SyncMcpToolCallbackProvider syncMcpToolCallbackProvider;
+  private final ChatClient chatClient;
 
-    public ChatbotService(ChatModel chatModel, SyncMcpToolCallbackProvider syncMcpToolCallbackProvider) {
-        this.syncMcpToolCallbackProvider = syncMcpToolCallbackProvider;
+  public ChatbotService(
+      ChatModel chatModel, SyncMcpToolCallbackProvider syncMcpToolCallbackProvider) {
+    this.syncMcpToolCallbackProvider = syncMcpToolCallbackProvider;
 
-        ChatMemory chatMemory = MessageWindowChatMemory.builder().build();
-        this.chatClient = ChatClient.builder(chatModel)
+    ChatMemory chatMemory = MessageWindowChatMemory.builder().build();
+    this.chatClient =
+        ChatClient.builder(chatModel)
             .defaultAdvisors(
                 PromptChatMemoryAdvisor.builder(chatMemory).build(),
                 MessageChatMemoryAdvisor.builder(chatMemory).build())
             .build();
+  }
+
+  public String chat(String message, String conversationId) {
+    try {
+      Message systemMessage = new SystemMessage(systemContext);
+      Message userMessage = new UserMessage(message);
+
+      return chatClient
+          .prompt(new Prompt(List.of(userMessage, systemMessage)))
+          .toolCallbacks(syncMcpToolCallbackProvider.getToolCallbacks())
+          .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+          .call()
+          .content();
+
+    } catch (Exception e) {
+      log.error("Error processing chat request", e);
+      return "Sorry, I encountered an error while processing your request. Please try again.";
     }
-
-    public String chat(String message, String conversationId) {
-        try {
-            Message systemMessage = new SystemMessage(systemContext);
-            Message userMessage = new UserMessage(message);
-
-            return chatClient
-                .prompt(new Prompt(List.of(userMessage, systemMessage)))
-                .toolCallbacks(syncMcpToolCallbackProvider.getToolCallbacks())
-                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-                .call()
-                .content();
-
-        } catch (Exception e) {
-            log.error("Error processing chat request", e);
-            return "Sorry, I encountered an error while processing your request. Please try again.";
-        }
-    }
-} 
+  }
+}

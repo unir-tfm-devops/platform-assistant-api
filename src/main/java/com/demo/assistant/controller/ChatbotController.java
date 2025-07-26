@@ -17,25 +17,26 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class ChatbotController {
 
-    private final ChatbotService chatbotService;
+  private final ChatbotService chatbotService;
 
-    @PostMapping("/chat")
-    public ResponseEntity<ChatResponse> chat(@RequestBody ChatRequest request) {
-        try {
-            log.info("Received chat request: {}", request.message());
+  @PostMapping("/chat")
+  public ResponseEntity<ChatResponse> chat(@RequestBody ChatRequest request) {
+    try {
+      log.info("Received chat request: {}", request.message());
 
-            String response = chatbotService.chat(request.message(), request.conversationId());
+      String response = chatbotService.chat(request.message(), request.conversationId());
 
-            ChatResponse chatResponse = new ChatResponse(response, true);
+      ChatResponse chatResponse = new ChatResponse(response, true);
 
-            return ResponseEntity.ok(chatResponse);
+      return ResponseEntity.ok(chatResponse);
 
-        } catch (Exception e) {
-            log.error("Error processing chat request", e);
+    } catch (Exception e) {
+      log.error("Error processing chat request", e);
 
-            ChatResponse errorResponse = new ChatResponse("An error occurred while processing your request", false);
+      ChatResponse errorResponse =
+          new ChatResponse("An error occurred while processing your request", false);
 
-            return ResponseEntity.internalServerError().body(errorResponse);
-        }
+      return ResponseEntity.internalServerError().body(errorResponse);
     }
-} 
+  }
+}
