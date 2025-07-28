@@ -3,7 +3,7 @@ spring:
     name: platform-assistant-api
   ai:
     openai:
-      api-key: ${OPENAI_API_KEY:your-openai-api-key-here}
+      api-key: ${OPENAI_API_KEY}
       chat:
         options:
           model: gpt-4o-mini
@@ -24,4 +24,22 @@ spring:
                 - ghcr.io/github/github-mcp-server
               env:
                 GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PAT}
+            aws-eks:
+              command: docker
+              args:
+                - run
+                - -i
+                - --rm
+                - -e
+                - AWS_ACCESS_KEY_ID
+                - -e
+                - AWS_SECRET_ACCESS_KEY
+                - -e
+                - AWS_REGION
+                - awslabs/eks-mcp-server
+                - --allow-sensitive-data-access
+              env:
+                AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
+                AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
+                AWS_REGION: us-east-1
 

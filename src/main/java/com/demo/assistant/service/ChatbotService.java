@@ -1,6 +1,6 @@
 package com.demo.assistant.service;
 
-import java.util.List;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -8,7 +8,6 @@ import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -25,28 +24,33 @@ public class ChatbotService {
   private Resource systemContext;
 
   private final SyncMcpToolCallbackProvider syncMcpToolCallbackProvider;
-  private final ChatClient chatClient;
+  private final ChatModel chatModel;
+  private ChatClient chatClient;
 
   public ChatbotService(
       ChatModel chatModel, SyncMcpToolCallbackProvider syncMcpToolCallbackProvider) {
     this.syncMcpToolCallbackProvider = syncMcpToolCallbackProvider;
+    this.chatModel = chatModel;
+  }
 
+  @PostConstruct
+  public void initializeChatClient() {
     ChatMemory chatMemory = MessageWindowChatMemory.builder().build();
     this.chatClient =
         ChatClient.builder(chatModel)
             .defaultAdvisors(
                 PromptChatMemoryAdvisor.builder(chatMemory).build(),
                 MessageChatMemoryAdvisor.builder(chatMemory).build())
+            .defaultSystem(systemContext)
             .build();
   }
 
   public String chat(String message, String conversationId) {
     try {
-      Message systemMessage = new SystemMessage(systemContext);
       Message userMessage = new UserMessage(message);
 
       return chatClient
-          .prompt(new Prompt(List.of(userMessage, systemMessage)))
+          .prompt(new Prompt(userMessage))
           .toolCallbacks(syncMcpToolCallbackProvider.getToolCallbacks())
           .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
           .call()
