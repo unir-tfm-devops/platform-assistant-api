@@ -74,7 +74,7 @@ public class ChatbotService {
           .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
           .stream()
           .content()
-          .delayElements(Duration.ofMillis(100)); 
+          .delayElements(Duration.ofMillis(100));
 
     } catch (Exception e) {
       log.error("Error processing streaming chat request", e);
